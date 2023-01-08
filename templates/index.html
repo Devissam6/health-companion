@@ -15,13 +15,20 @@
         <nav></nav>
 
         <main>
+            <div id="invalidInputAlert">
+                {% if errorMsg %}
+                    <p>{{ errorMsg }}</p>
+                {% else %}
+                    <p></p>
+                {% endif %}
+            </div>
             <form action="/" method="post">
                 {% if info %}
                     <div>
                         <p>Target Calories</p>
-                        <input autocomplete="off" autofocus id="targetCal" name="targetCal" placeholder="Target" type="number" value="{{ info.targetCal }}" required>
+                        <input autocomplete="off" autofocus id="targetCal" name="targetCal" placeholder="Target" type="number" min="0" value="{{ info.targetCal }}" required>
                         <p>Percentage of calories as fat</p>
-                        <input autocomplete="off" id="fatPercent" name="fatPercent" placeholder="Percentage" type="number" value="{{ info.fatPercent }}" required>
+                        <input autocomplete="off" id="fatPercent" name="fatPercent" placeholder="Percentage" type="number" min="0" value="{{ info.fatPercent }}" required>
                     </div>
                     <div>
                         <table>
@@ -36,7 +43,7 @@
                                 <tr>
                                     <td>Protein</td>
                                     <td>{{ info.proteinEnergy }}</td>
-                                    <td><input autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" value="{{ info.proteinMass }}" required></td>
+                                    <td><input autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" value="{{ info.proteinMass }}" required></td>
                                 </tr>
                                 <tr>
                                     <td>Fat</td>
@@ -62,9 +69,9 @@
                 {% else %}
                     <div>
                         <p>Target Calories</p>
-                        <input autocomplete="off" autofocus id="targetCal" name="targetCal" placeholder="Target" type="number" required>
+                        <input autocomplete="off" autofocus id="targetCal" name="targetCal" placeholder="Target" type="number" min="0" required>
                         <p>Percentage of calories as fat</p>
-                        <input autocomplete="off" id="fatPercent" name="fatPercent" placeholder="Percentage" type="number" required>
+                        <input autocomplete="off" id="fatPercent" name="fatPercent" placeholder="Percentage" type="number" min="0" required>
                     </div>
                     <div>
                         <table>
@@ -79,7 +86,7 @@
                                 <tr>
                                     <td>Protein</td>
                                     <td></td>
-                                    <td><input autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" required></td>
+                                    <td><input autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" required></td>
                                 </tr>
                                 <tr>
                                     <td>Fat</td>
