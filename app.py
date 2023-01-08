@@ -9,9 +9,9 @@ def index():
     # Response to POST request (user submitted input)
     if request.method == "POST":
         # Gather info from form
-        info = {"targetCal": request.form.get("targetCal", -1, int),
-                "fatPercent": request.form.get("fatPercent", -1, int),
-                "proteinMass": request.form.get("proteinMass", -1, int)}
+        info = {"targetCal": request.form.get("targetCal", -1, float),
+                "fatPercent": request.form.get("fatPercent", -1, float),
+                "proteinMass": request.form.get("proteinMass", -1, float)}
         # Return error for invalid input
         errorMsg = "Please enter a positive number for: "
         error = False
@@ -28,6 +28,8 @@ def index():
         info["carbEnergy"] = info["targetCal"] - info["proteinEnergy"] - info["fatEnergy"]
         info["carbMass"] = info["carbEnergy"] * (1/4)
         info["totalEnergy"] = info["targetCal"]
+        for key in info:
+            info[key] = round(info[key], 1)
         # Render index page with values in info
         return render_template("index.html", info=info)
     # Response to GET request

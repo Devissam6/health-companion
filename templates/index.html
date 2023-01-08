@@ -15,7 +15,7 @@
         <nav></nav>
 
         <main>
-            <div id="invalidInputAlert">
+            <div id="invalidInputAlert" class="container-fluid">
                 {% if errorMsg %}
                     <p>{{ errorMsg }}</p>
                 {% else %}
@@ -24,91 +24,121 @@
             </div>
             <form action="/" method="post">
                 {% if info %}
-                    <div>
-                        <p>Target Calories</p>
-                        <input autocomplete="off" autofocus id="targetCal" name="targetCal" placeholder="Target" type="number" min="0" value="{{ info.targetCal }}" required>
-                        <p>Percentage of calories as fat</p>
-                        <input autocomplete="off" id="fatPercent" name="fatPercent" placeholder="Percentage" type="number" min="0" value="{{ info.fatPercent }}" required>
+                    <div class="mb-5 container-fluid" id="mealPlanConstraints">
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input class="form-control bg-primary-subtle" autocomplete="off" autofocus id="targetCal" name="targetCal" aria-describedby="targetCalHelp" placeholder="Target" type="number" min="0" value="{{ info.targetCal }}" required>
+                                <label for="targetCal" class="form-label">Target Calories</label>
+                            </div>
+                            <div id="targetCalHelp" class="form-text">Total number of calories (kcal) to be consumed daily.</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <div class="form-floating">
+                                    <input class="form-control bg-primary-subtle" autocomplete="off" id="fatPercent" name="fatPercent" aria-describedby="fatPercentHelp" placeholder="Percentage" type="number" min="0" value="{{ info.fatPercent }}" required>
+                                    <label for="fatPercent" class="form-label">Fat Percentage</label>
+                                </div>
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <div id="fatPercentHelp" class="form-text">Proportion of total daily calories reserved for fat.</div>
+                        </div>
                     </div>
-                    <div>
-                        <table>
+                    <div class="mb-5 container-fluid" id="macroTable">
+                        <table class="table table-hover align-middle">
                             <thead>
                                 <tr>
-                                    <th>Macronutrient</th>
-                                    <th>Energy (kcal)</th>
-                                    <th>Mass (g)</th>
+                                    <th scope="col">Macronutrient</th>
+                                    <th scope="col">Energy (kcal)</th>
+                                    <th scope="col">Mass (g)</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="table-group-divider">
                                 <tr>
-                                    <td>Protein</td>
+                                    <th scope="row">Protein</th>
                                     <td>{{ info.proteinEnergy }}</td>
-                                    <td><input autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" value="{{ info.proteinMass }}" required></td>
+                                    <td><input class="form-control bg-primary-subtle" autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" value="{{ info.proteinMass }}" required></td>
                                 </tr>
                                 <tr>
-                                    <td>Fat</td>
+                                    <th scope="row">Fat</th>
                                     <td>{{ info.fatEnergy }}</td>
                                     <td>{{ info.fatMass }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Carbohydrate</td>
+                                    <th scope="row">Carbohydrate</th>
                                     <td>{{ info.carbEnergy }}</td>
                                     <td>{{ info.carbMass }}</td>
                                 </tr>
                             </tbody>
-                            <tfoot>
+                            <tfoot class="table-group-divider">
                                 <tr>
-                                    <td>Total</td>
+                                    <th scope="row">Total</th>
                                     <td>{{ info.totalEnergy }}</td>
                                     <td></td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
-                    <button type="submit">Calculate</button>
-                {% else %}
-                    <div>
-                        <p>Target Calories</p>
-                        <input autocomplete="off" autofocus id="targetCal" name="targetCal" placeholder="Target" type="number" min="0" required>
-                        <p>Percentage of calories as fat</p>
-                        <input autocomplete="off" id="fatPercent" name="fatPercent" placeholder="Percentage" type="number" min="0" required>
+                    <div class="mb-5 container-fluid" id="submitButton">
+                        <button type="submit" class="btn btn-primary">Calculate</button>
                     </div>
-                    <div>
-                        <table>
+                {% else %}
+                    <div class="mb-5 container-fluid" id="mealPlanConstraints">
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <input class="form-control bg-primary-subtle" autocomplete="off" autofocus id="targetCal" name="targetCal" aria-describedby="targetCalHelp" placeholder="Target" type="number" min="0" required>
+                                <label for="targetCal" class="form-label">Target Calories</label>
+                            </div>
+                            <div id="targetCalHelp" class="form-text">Total number of calories (kcal) to be consumed daily.</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <div class="form-floating">
+                                    <input class="form-control bg-primary-subtle" autocomplete="off" id="fatPercent" name="fatPercent" aria-describedby="fatPercentHelp" placeholder="Percentage" type="number" min="0" required>
+                                    <label for="fatPercent" class="form-label">Fat Percentage</label>
+                                </div>
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <div id="fatPercentHelp" class="form-text">Proportion of total daily calories reserved for fat.</div>
+                        </div>
+                    </div>
+                    <div class="mb-5 container-fluid" id="macroTable">
+                        <table class="t table-hoverable align-middle">
                             <thead>
                                 <tr>
-                                    <th>Macronutrient</th>
-                                    <th>Energy (kcal)</th>
-                                    <th>Mass (g)</th>
+                                    <th scope="col">Macronutrient</th>
+                                    <th scope="col">Energy (kcal)</th>
+                                    <th scope="col">Mass (g)</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="table-group-divider">
                                 <tr>
-                                    <td>Protein</td>
+                                hth <td scope="row">Protehn</td>
                                     <td></td>
-                                    <td><input autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" required></td>
+                                    <td><input class="form-control bg-primary-subtle" autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" required></td>
                                 </tr>
                                 <tr>
-                                    <td>Fat</td>
+                                h <td scope="row">Fath/td>
                                     <td></td>
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td>Carbohydrate</td>
+                                hth <td scope="row">Carbohydrate<htd>
                                     <td></td>
                                     <td></td>
                                 </tr>
                             </tbody>
-                            <tfoot>
+                            <tfoot class="table-group-divider">
                                 <tr>
-                                    <td>Total</td>
+                                h scope="row"   <td>Total<htd>
                                     <td></td>
                                     <td></td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
-                    <button type="submit">Calculate</button>
+                    <div class="mb-5 container-fluid" id="submitButton">
+                        <button type="submit" class="btn btn-primary">Calculate</button>
+                    </div>
                 {% endif %}
             </form>
         </main>

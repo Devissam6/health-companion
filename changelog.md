@@ -9,4 +9,4 @@
 
 ##### Todo
 - [X] Data validation and 'misuse cleanup'
-- [ ] Apply basic styling with Bootstrap
+- [x] Apply basic styling with Bootstrap
