@@ -8,5 +8,5 @@
    - '/' route calculates and populates rest of table with values according to macro energy densities.
 
 ##### Todo
-- [X] Data validation and 'misuse cleanup'
-- [x] Apply basic styling with Bootstrap
+- [X] (Completed 23/01/08) Data validation and 'misuse cleanup'
+- [x] (Completed 23/01/08) Apply basic styling with Bootstrap
