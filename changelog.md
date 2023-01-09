@@ -11,3 +11,4 @@
 - [x] (Completed 23/01/09) Data validation and 'misuse cleanup'
 - [x] (Completed 23/01/09) Apply basic styling with Bootstrap
 - [x] (Completed 23/01/09) Add table for weekly macro values
+- [x] (Completed 23/01/09) Add styling for layout adjustment for different screen sizes
