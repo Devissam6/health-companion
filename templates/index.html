@@ -22,124 +22,70 @@
                     <p></p>
                 {% endif %}
             </div>
+
             <form action="/" method="post">
-                {% if info %}
-                    <div class="mb-5 container-fluid" id="mealPlanConstraints">
-                        <div class="mb-3">
+                <div class="mb-5 container-fluid" id="mealPlanConstraints">
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input class="form-control bg-primary-subtle" autocomplete="off" autofocus id="targetCal" name="targetCal" aria-describedby="targetCalHelp" placeholder="Target" type="number" min="0" {% if info %} value="{{ info.targetCal }}" {% endif %} required>
+                            <label for="targetCal" class="form-label">Target Calories</label>
+                        </div>
+                        <div id="targetCalHelp" class="form-text">Total number of calories (kcal) to be consumed daily.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="input-group">
                             <div class="form-floating">
-                                <input class="form-control bg-primary-subtle" autocomplete="off" autofocus id="targetCal" name="targetCal" aria-describedby="targetCalHelp" placeholder="Target" type="number" min="0" value="{{ info.targetCal }}" required>
-                                <label for="targetCal" class="form-label">Target Calories</label>
+                                <input class="form-control bg-primary-subtle" autocomplete="off" id="fatPercent" name="fatPercent" aria-describedby="fatPercentHelp" placeholder="Percentage" type="number" min="0" {% if info %} value="{{ info.fatPercent }}" {% endif %} required>
+                                <label for="fatPercent" class="form-label">Fat Percentage</label>
                             </div>
-                            <div id="targetCalHelp" class="form-text">Total number of calories (kcal) to be consumed daily.</div>
+                            <span class="input-group-text">%</span>
                         </div>
-                        <div class="mb-3">
-                            <div class="input-group">
-                                <div class="form-floating">
-                                    <input class="form-control bg-primary-subtle" autocomplete="off" id="fatPercent" name="fatPercent" aria-describedby="fatPercentHelp" placeholder="Percentage" type="number" min="0" value="{{ info.fatPercent }}" required>
-                                    <label for="fatPercent" class="form-label">Fat Percentage</label>
-                                </div>
-                                <span class="input-group-text">%</span>
-                            </div>
-                            <div id="fatPercentHelp" class="form-text">Proportion of total daily calories reserved for fat.</div>
-                        </div>
+                        <div id="fatPercentHelp" class="form-text">Proportion of total daily calories reserved for fat.</div>
                     </div>
-                    <div class="mb-5 container-fluid" id="macroTable">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Macronutrient</th>
-                                    <th scope="col">Energy (kcal)</th>
-                                    <th scope="col">Mass (g)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-group-divider">
-                                <tr>
-                                    <th scope="row">Protein</th>
-                                    <td>{{ info.proteinEnergy }}</td>
-                                    <td><input class="form-control bg-primary-subtle" autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" value="{{ info.proteinMass }}" required></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Fat</th>
-                                    <td>{{ info.fatEnergy }}</td>
-                                    <td>{{ info.fatMass }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Carbohydrate</th>
-                                    <td>{{ info.carbEnergy }}</td>
-                                    <td>{{ info.carbMass }}</td>
-                                </tr>
-                            </tbody>
-                            <tfoot class="table-group-divider">
-                                <tr>
-                                    <th scope="row">Total</th>
-                                    <td>{{ info.totalEnergy }}</td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="mb-5 container-fluid" id="submitButton">
-                        <button type="submit" class="btn btn-primary">Calculate</button>
-                    </div>
-                {% else %}
-                    <div class="mb-5 container-fluid" id="mealPlanConstraints">
-                        <div class="mb-3">
-                            <div class="form-floating">
-                                <input class="form-control bg-primary-subtle" autocomplete="off" autofocus id="targetCal" name="targetCal" aria-describedby="targetCalHelp" placeholder="Target" type="number" min="0" required>
-                                <label for="targetCal" class="form-label">Target Calories</label>
-                            </div>
-                            <div id="targetCalHelp" class="form-text">Total number of calories (kcal) to be consumed daily.</div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="input-group">
-                                <div class="form-floating">
-                                    <input class="form-control bg-primary-subtle" autocomplete="off" id="fatPercent" name="fatPercent" aria-describedby="fatPercentHelp" placeholder="Percentage" type="number" min="0" required>
-                                    <label for="fatPercent" class="form-label">Fat Percentage</label>
-                                </div>
-                                <span class="input-group-text">%</span>
-                            </div>
-                            <div id="fatPercentHelp" class="form-text">Proportion of total daily calories reserved for fat.</div>
-                        </div>
-                    </div>
-                    <div class="mb-5 container-fluid" id="macroTable">
-                        <table class="t table-hoverable align-middle">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Macronutrient</th>
-                                    <th scope="col">Energy (kcal)</th>
-                                    <th scope="col">Mass (g)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-group-divider">
-                                <tr>
-                                hth <td scope="row">Protehn</td>
-                                    <td></td>
-                                    <td><input class="form-control bg-primary-subtle" autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" required></td>
-                                </tr>
-                                <tr>
-                                h <td scope="row">Fath/td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                hth <td scope="row">Carbohydrate<htd>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                            <tfoot class="table-group-divider">
-                                <tr>
-                                h scope="row"   <td>Total<htd>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="mb-5 container-fluid" id="submitButton">
-                        <button type="submit" class="btn btn-primary">Calculate</button>
-                    </div>
-                {% endif %}
+                </div>
+
+                <div class="mb-5 container-fluid" id="macroTable">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">Macronutrient</th>
+                                <th scope="col">Energy (kcal)</th>
+                                <th scope="col">Mass (g)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="table-group-divider">
+                            <tr>
+                                <th scope="row">Protein</th>
+                                <td>{% if info %}{{ info.proteinEnergy }}{% endif %}</td>
+                                <td><input class="form-control bg-primary-subtle" autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" {% if info %} value="{{ info.proteinMass }}" {% endif %} required></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Fat</th>
+                                <td>{% if info %}{{ info.fatEnergy }}{% endif %}</td>
+                                <td>{% if info %}{{ info.fatMass }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Carbohydrate</th>
+                                <td>{% if info %}{{ info.carbEnergy }}{% endif %}</td>
+                                <td>{% if info %}{{ info.carbMass }}{% endif %}</td>
+                            </tr>
+                        </tbody>
+
+                        <tfoot class="table-group-divider">
+                            <tr>
+                                <th scope="row">Total</th>
+                                <td>{% if info %}{{ info.totalEnergy }}{% endif %}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="mb-5 container-fluid" id="submitButton">
+                    <button type="submit" class="btn btn-primary">Calculate</button>
+                </div>
             </form>
         </main>
 
