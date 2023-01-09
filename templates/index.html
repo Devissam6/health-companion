@@ -27,11 +27,25 @@
             <form action="/" method="post">
                 <div class="mb-5 container-fluid" id="mealPlanConstraints">
                     <div class="mb-3">
-                        <div class="form-floating">
-                            <input class="form-control bg-primary-subtle" autocomplete="off" autofocus id="targetCal" name="targetCal" aria-describedby="targetCalHelp" placeholder="Target" type="number" min="0" {% if info %} value="{{ info.targetCal }}" {% endif %} required>
-                            <label for="targetCal" class="form-label">Target Calories</label>
+                        <div class="input-group">
+                            <div class="form-floating">
+                                <input class="form-control bg-primary-subtle" autocomplete="off" autofocus id="targetCal" name="targetCal" aria-describedby="targetCalHelp" placeholder="Target" type="number" min="0" {% if info %} value="{{ info.targetCal }}" {% endif %} required>
+                                <label for="targetCal" class="form-label">Target Calories</label>
+                            </div>
+                            <span class="input-group-text">kcal</span>
                         </div>
                         <div id="targetCalHelp" class="form-text">Total number of calories (kcal) to be consumed daily.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <div class="form-floating">
+                                <input class="form-control bg-primary-subtle" autocomplete="off" id="proteinMass" name="proteinMass" aria-describedby="proteinMassHelp" placeholder="Mass" type="number" min="0" {% if info %} value="{{ info.proteinMass }}" {% endif %} required>
+                                <label for="proteinMass" class="form-label">Protein Mass</label>
+                            </div>
+                            <span class="input-group-text">g</span>
+                        </div>
+                        <div id="proteinMassHelp" class="form-text">Total mass of protein to be consumed daily.</div>
                     </div>
 
                     <div class="mb-3">
@@ -46,11 +60,11 @@
                     </div>
                 </div>
 
-                <div class="mb-5 container-fluid" id="macroTable">
+                <div class="mb-5 container-fluid" id="macroTableDaily">
                     <table class="table table-hover align-middle">
                         <thead>
                             <tr>
-                                <th scope="col">Macronutrient</th>
+                                <th scope="col">Daily Values</th>
                                 <th scope="col">Energy (kcal)</th>
                                 <th scope="col">Mass (g)</th>
                             </tr>
@@ -59,25 +73,63 @@
                         <tbody class="table-group-divider">
                             <tr>
                                 <th scope="row">Protein</th>
-                                <td>{% if info %}{{ info.proteinEnergy }}{% endif %}</td>
-                                <td><input class="form-control bg-primary-subtle" autocomplete="off" id="proteinMass" name="proteinMass" placeholder="Mass" type="number" min="0" {% if info %} value="{{ info.proteinMass }}" {% endif %} required></td>
+                                <td>{% if info %}{{ "%.1f"|format(info.proteinEnergy) }}{% endif %}</td>
+                                <td>{% if info %}{{ "%.1f"|format(info.proteinMass) }}{% endif %}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Fat</th>
-                                <td>{% if info %}{{ info.fatEnergy }}{% endif %}</td>
-                                <td>{% if info %}{{ info.fatMass }}{% endif %}</td>
+                                <td>{% if info %}{{ "%.1f"|format(info.fatEnergy) }}{% endif %}</td>
+                                <td>{% if info %}{{ "%.1f"|format(info.fatMass) }}{% endif %}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Carbohydrate</th>
-                                <td>{% if info %}{{ info.carbEnergy }}{% endif %}</td>
-                                <td>{% if info %}{{ info.carbMass }}{% endif %}</td>
+                                <td>{% if info %}{{ "%.1f"|format(info.carbEnergy) }}{% endif %}</td>
+                                <td>{% if info %}{{ "%.1f"|format(info.carbMass) }}{% endif %}</td>
                             </tr>
                         </tbody>
 
                         <tfoot class="table-group-divider">
                             <tr>
                                 <th scope="row">Total</th>
-                                <td>{% if info %}{{ info.totalEnergy }}{% endif %}</td>
+                                <td>{% if info %}{{ "%.1f"|format(info.totalEnergy) }}{% endif %}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="mb-5 container-fluid" id="macroTableWeekly">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">Weekly Values</th>
+                                <th scope="col">Energy (kcal)</th>
+                                <th scope="col">Mass (g)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="table-group-divider">
+                            <tr>
+                                <th scope="row">Protein</th>
+                                <td>{% if info %}{{ "%.1f"|format(info.proteinEnergy * 7) }}{% endif %}</td>
+                                <td>{% if info %}{{ "%.1f"|format(info.proteinMass * 7) }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Fat</th>
+                                <td>{% if info %}{{ "%.1f"|format(info.fatEnergy * 7) }}{% endif %}</td>
+                                <td>{% if info %}{{ "%.1f"|format(info.fatMass * 7) }}{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Carbohydrate</th>
+                                <td>{% if info %}{{ "%.1f"|format(info.carbEnergy * 7) }}{% endif %}</td>
+                                <td>{% if info %}{{ "%.1f"|format(info.carbMass * 7) }}{% endif %}</td>
+                            </tr>
+                        </tbody>
+
+                        <tfoot class="table-group-divider">
+                            <tr>
+                                <th scope="row">Total</th>
+                                <td>{% if info %}{{ "%.1f"|format(info.totalEnergy * 7) }}{% endif %}</td>
                                 <td></td>
                             </tr>
                         </tfoot>

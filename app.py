@@ -21,7 +21,6 @@ def index():
                 (key == "fatPercent" and ((value/100) * info["targetCal"] > info["targetCal"] - 4 * info["proteinMass"] or value > 100) and "proteinMass" not in errorMsg)):
                 errorMsg += ("({error}) ".format(error=key))
                 error = True
-            
         if error:
             return render_template("index.html", errorMsg=errorMsg)
         # Calculate values to fill table
@@ -31,8 +30,6 @@ def index():
         info["carbEnergy"] = info["targetCal"] - info["proteinEnergy"] - info["fatEnergy"]
         info["carbMass"] = info["carbEnergy"] * (1/4)
         info["totalEnergy"] = info["targetCal"]
-        for key in info:
-            info[key] = round(info[key], 1)
         # Render index page with values in info
         return render_template("index.html", info=info)
     # Response to GET request
