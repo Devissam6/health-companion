@@ -24,7 +24,7 @@ Contains functions for database integration taken from flask documentation.
 A barebones HTML file with a form consisting of input fields allowing the user to submit information about their desired meal plan, as well as tables (daily and weekly values) which, using jinja syntax, is either empty in the absence of the info dictionary, or filled with values calculated to fit with the user-defined constraints. div element at the top of main is populated with a dismissable alert if there is an error message to display.
 
 ##### foodData.db
-A file to house all the data about the user's meal plan details and the custom foods involved.
+A file to house all the data about the user's meal plan details and the custom foods involved. Contains table 'plan' which stores all the macronutrient profiles of any plans stored by the user, and table 'food' to which custom food items can be added with their nutritional details and other info such as price, price per kg, price per unit protein, link to an online retailer etc. Also contains another table which links these aforementioned two, so the foods to be included in each meal plan can be tracked.
 
 ##### schema.sql
 A file describing the structure of foodData.db.

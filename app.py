@@ -5,7 +5,7 @@ import sqlite3
 
 app = Flask(__name__)
 
-DATABASE = '/foodData.db'
+DATABASE = 'foodData.db'
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -64,3 +64,4 @@ def index():
     # Response to GET request
     else:
         return render_template("index.html")
+
