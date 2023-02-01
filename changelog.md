@@ -22,9 +22,9 @@
      - init_db initialises tables in database with structure defined in a schema file;
 
 ##### Todo
-- [x] Define structure in schema and build database
-      - Table storing meal plan constraints and macro details of user
-      - Table storing custom foods with their nutritional information
+- [x] (Completed 23/01/21) Define structure in schema and build database
+  - Table storing meal plan constraints and macro details of user
+  - Table storing custom foods with their nutritional information
 - [ ] Build interface to interact with database from app
-      - Must allow user to edit meal plan constraints
-      - Must allow user to add and remove custom foods
+  - Must allow user to edit meal plan constraints
+  - Must allow user to add and remove custom foods

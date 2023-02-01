@@ -8,7 +8,8 @@ CREATE TABLE plan (
     fat_energy NUMERIC NOT NULL,
     fat_mass NUMERIC NOT NULL,
     carbohydrate_energy NUMERIC NOT NULL,
-    carbohydrate_mass NUMERIC NOT NULL);
+    carbohydrate_mass NUMERIC NOT NULL,
+    total_energy NUMERIC NOT NULL);
 CREATE TABLE food (
     food_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     food_name TEXT NOT NULL,
