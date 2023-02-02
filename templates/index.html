@@ -78,8 +78,8 @@
                         <div class="form-floating">
                             <select class="form-select mb-1 bg-primary-subtle" name="loadPlanName" id="loadPlanName">
                                 <option selected>(Select Plan)</option>
-                                {% if planList %}
-                                {% for plan in planList %}
+                                {% if plansList %}
+                                {% for plan in plansList %}
                                 <option value="{{ plan.plan_id }}">{{ plan.plan_name }}</option>
                                 {% endfor %}
                                 {% endif %}

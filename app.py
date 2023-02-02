@@ -8,31 +8,19 @@ app = Flask(__name__)
 
 DATABASE = 'foodData.db'
 
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-        db.row_factory = sqlite3.Row
-    return db
+def get_db(query, args=(), one=False):
+    db = sqlite3.connect('foodData.db')
+    cur = db.cursor()
+    cur.row_factory = sqlite3.Row
 
-def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    cur.close()
-    return (rv[0] if rv else None) if one else rv
+    res = cur.execute(query, args).fetchall()
+    db.commit()
+    db.close()
 
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
+    return (res[0] if res else None) if one else res
 
-def init_db():
-    with app.app_context():
-        db = get_db()
-        with app.open_resource('schema.sql', mode='r') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
+def get_plans():
+    return get_db("SELECT * FROM plans")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -61,11 +49,12 @@ def index():
         info["carbEnergy"] = info["targetCal"] - info["proteinEnergy"] - info["fatEnergy"]
         info["carbMass"] = info["carbEnergy"] * (1/4)
         info["totalEnergy"] = info["targetCal"]
-        # Render index page with values in info
-        return render_template("index.html", info=info)
+        # Render index page with values in info, retrieved plans from database
+        return render_template("index.html", info=info, plansList=get_plans())
     # Response to GET request
     else:
-        return render_template("index.html")
+        # Retrieve all plans from database
+        return render_template("index.html", plansList=get_plans())
 
 
 @app.route("/saveplan", methods=["GET", "POST"])
@@ -81,7 +70,6 @@ def saveplan():
                 "dailyCarbEnergy": request.form.get("dailyCarbEnergyDisplay", -1, float),
                 "dailyCarbMass": request.form.get("dailyCarbMassDisplay", -1, float),
                 "dailyTotalEnergy": request.form.get("dailyTotalEnergyDisplay", -1, float)}
-        print(info)
         # User circumvented the 'required' tag of input fields in one way or another and submitted insufficient information
         if not info["planName"]:
             return render_template("index.html", errorMsg="Please enter a name for the plan.")
@@ -94,15 +82,15 @@ def saveplan():
             info["dailyTotalEnergy"] < 0):
             return render_template("index.html", errorMsg="Please verify valid macro values.")
 
-        query_db("""INSERT INTO plan (plan_name,
-                                        date_created,
-                                        protein_energy,
-                                        protein_mass,
-                                        fat_energy,
-                                        fat_mass,
-                                        carbohydrate_energy,
-                                        carbohydrate_mass,
-                                        total_energy)
+        get_db("""INSERT INTO plans (plan_name,
+                                    date_created,
+                                    protein_energy,
+                                    protein_mass,
+                                    fat_energy,
+                                    fat_mass,
+                                    carbohydrate_energy,
+                                    carbohydrate_mass,
+                                    total_energy)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", (info["planName"],
                                                             info["dateTimeCreated"],
                                                             info["dailyProteinEnergy"],
@@ -122,6 +110,20 @@ def saveplan():
 
 @app.route("/loadplan", methods=["GET", "POST"])
 def loadplan():
-    return render_template("index.html")
+    if request.method == "POST":
+        plan_id = request.form.get("loadPlanName", None, str)
+        res = get_db("SELECT * FROM plans WHERE plan_id = ?", (plan_id))[0]
 
+        info = {"planName": res["plan_name"],
+                "dateTimeCreated": res["date_created"],
+                "proteinEnergy": res["protein_energy"],
+                "proteinMass": res["protein_mass"],
+                "fatEnergy": res["fat_energy"],
+                "fatMass": res["fat_mass"],
+                "carbEnergy": res["carbohydrate_energy"],
+                "carbMass": res["carbohydrate_mass"],
+                "totalEnergy": res["total_energy"]}
+        return render_template("index.html", info=info, plansList=get_plans())
+    else:
+        return redirect("/")
 

@@ -1,5 +1,8 @@
--- SQLite
-CREATE TABLE plan (
+DROP TABLE IF EXISTS plans;
+DROP TABLE IF EXISTS foods;
+DROP TABLE IF EXISTS plan_food_link;
+
+CREATE TABLE plans (
     plan_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     plan_name TEXT NOT NULL,
     date_created DATETIME NOT NULL,
@@ -10,7 +13,7 @@ CREATE TABLE plan (
     carbohydrate_energy NUMERIC NOT NULL,
     carbohydrate_mass NUMERIC NOT NULL,
     total_energy NUMERIC NOT NULL);
-CREATE TABLE food (
+CREATE TABLE foods (
     food_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     food_name TEXT NOT NULL,
     date_added DATETIME NOT NULL,
