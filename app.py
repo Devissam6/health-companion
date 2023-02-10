@@ -1,6 +1,6 @@
 # Imports
 
-from flask import Flask, redirect, render_template, request, g
+from flask import Flask, redirect, render_template, request
 import sqlite3
 import time
 
@@ -9,7 +9,7 @@ app = Flask(__name__)
 DATABASE = 'foodData.db'
 
 def get_db(query, args=(), one=False):
-    db = sqlite3.connect('foodData.db')
+    db = sqlite3.connect(DATABASE)
     cur = db.cursor()
     cur.row_factory = sqlite3.Row
 
@@ -122,7 +122,9 @@ def loadplan():
                 "fatMass": res["fat_mass"],
                 "carbEnergy": res["carbohydrate_energy"],
                 "carbMass": res["carbohydrate_mass"],
-                "totalEnergy": res["total_energy"]}
+                "totalEnergy": res["total_energy"],
+                "targetCal": res["total_energy"],
+                "fatPercent": 100*res["fat_energy"]/res["total_energy"]}
         return render_template("index.html", info=info, plansList=get_plans())
     else:
         return redirect("/")

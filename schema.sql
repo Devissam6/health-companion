@@ -35,5 +35,5 @@ CREATE TABLE foods (
 CREATE TABLE plan_food_link (
     plan_id INTEGER NOT NULL,
     food_id INTEGER NOT NULL,
-    FOREIGN KEY(plan_id) REFERENCES plan(plan_id),
+    FOREIGN KEY(plan_id) REFERENCES plans(plan_id),
     FOREIGN KEY(food_id) REFERENCES food(food_id));
