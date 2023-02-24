@@ -23,8 +23,13 @@ def get_plans():
     return get_db("SELECT * FROM plans")
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def index():
+    return render_template("index.html")
+
+
+@app.route("/plan", methods=["GET", "POST"])
+def plan():
     # Response to POST request (user submitted input)
     if request.method == "POST":
         # Gather info from form
@@ -41,7 +46,7 @@ def index():
                 errorMsg += ("({error}) ".format(error=key))
                 error = True
         if error:
-            return render_template("index.html", errorMsg=errorMsg)
+            return render_template("plan.html", errorMsg=errorMsg)
         # Calculate values to fill table
         info["proteinEnergy"] = info["proteinMass"] * 4
         info["fatEnergy"] = info["targetCal"] * (info["fatPercent"]/100)
@@ -50,11 +55,11 @@ def index():
         info["carbMass"] = info["carbEnergy"] * (1/4)
         info["totalEnergy"] = info["targetCal"]
         # Render index page with values in info, retrieved plans from database
-        return render_template("index.html", info=info, plansList=get_plans())
+        return render_template("plan.html", info=info, plansList=get_plans())
     # Response to GET request
     else:
         # Retrieve all plans from database
-        return render_template("index.html", plansList=get_plans())
+        return render_template("plan.html", plansList=get_plans())
 
 
 @app.route("/saveplan", methods=["GET", "POST"])
@@ -72,7 +77,7 @@ def saveplan():
                 "dailyTotalEnergy": request.form.get("dailyTotalEnergyDisplay", -1, float)}
         # User circumvented the 'required' tag of input fields in one way or another and submitted insufficient information
         if not info["planName"]:
-            return render_template("index.html", errorMsg="Please enter a name for the plan.")
+            return render_template("plan.html", errorMsg="Please enter a name for the plan.")
         if (info["dailyProteinEnergy"] < 0 or
             info["dailyProteinMass"] < 0 or
             info["dailyFatEnergy"] < 0 or
@@ -80,7 +85,7 @@ def saveplan():
             info["dailyCarbEnergy"] < 0 or
             info["dailyCarbMass"] < 0 or
             info["dailyTotalEnergy"] < 0):
-            return render_template("index.html", errorMsg="Please verify valid macro values.")
+            return render_template("plan.html", errorMsg="Please verify valid macro values.")
 
         get_db("""INSERT INTO plans (plan_name,
                                     date_created,
@@ -101,11 +106,11 @@ def saveplan():
                                                             info["dailyCarbMass"],
                                                             info["dailyTotalEnergy"]))
 
-        return redirect("/")
+        return redirect("/plan")
 
     # User accessed route directly without submitting form
     else:
-        return redirect("/")
+        return redirect("/plan")
 
 
 @app.route("/loadplan", methods=["GET", "POST"])
@@ -125,7 +130,66 @@ def loadplan():
                 "totalEnergy": res["total_energy"],
                 "targetCal": res["total_energy"],
                 "fatPercent": 100*res["fat_energy"]/res["total_energy"]}
-        return render_template("index.html", info=info, plansList=get_plans())
+        return render_template("plan.html", info=info, plansList=get_plans())
     else:
-        return redirect("/")
+        return redirect("/plan")
 
+
+@app.route("/food", methods=["GET", "POST"])
+def food():
+    foods = get_db("""SELECT * FROM foods""")
+    return render_template("food.html", foods=foods)
+
+
+@app.route("/savefood", methods=["GET", "POST"])
+def savefood():
+    timeAdded = time.strftime("%Y-%m-%d %H:%M:%S")
+    protein = request.form.get("foodProteinInput", -1, float)
+    mass = request.form.get("foodMassInput", -1, float)
+    price = request.form.get("foodPriceInput", -1, float)
+    get_db("""INSERT INTO foods (food_name,
+                                date_added,
+                                type,
+                                energy,
+                                fat,
+                                saturated_fat,
+                                carbohydrates,
+                                sugar,
+                                fibre,
+                                protein,
+                                salt,
+                                mass,
+                                price,
+                                price_per_kg,
+                                price_per_20g_protein,
+                                link,
+                                notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (request.form.get("foodNameInput", None, str),
+                                                                                timeAdded,
+                                                                                request.form.get("foodTypeInput", None, str),
+                                                                                request.form.get("foodEnergyInput", -1, float),
+                                                                                request.form.get("foodFatInput", -1, float),
+                                                                                request.form.get("foodSatFatInput", -1, float),
+                                                                                request.form.get("foodCarbInput", -1, float),
+                                                                                request.form.get("foodSugarInput", -1, float),
+                                                                                request.form.get("foodFibreInput", -1, float),
+                                                                                protein,
+                                                                                request.form.get("foodSaltInput", -1, float),
+                                                                                mass,
+                                                                                price,
+                                                                                price * 1000 * 1/mass,
+                                                                                price * 2000 * 1/(protein * mass),
+                                                                                request.form.get("foodLinkInput", None, str),
+                                                                                request.form.get("foodNotesInput", None, str)
+                                                                                ))
+    return redirect("/food")
+
+
+@app.route("/deletefood", methods=["GET", "POST"])
+def deletefood():
+    if request.method == "POST":
+        food_id = request.form.get("food_id", None, int)
+        get_db("""DELETE FROM foods WHERE food_id = ?""", (food_id,))
+        return redirect("/food")
+    else:
+        return redirect("/food")
