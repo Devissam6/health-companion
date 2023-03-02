@@ -1,0 +1,200 @@
+{% extends "layout.html" %}
+
+{% block title %}Plans{% endblock %}
+
+{% block activePlan %}active{% endblock %}
+
+{% block activePlanAria %}aria-current="page"{% endblock %}
+
+{% block main %}
+    <div id="messageAlert" class="container-fluid my-3">
+        {% if errorMsg %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <div>{{ errorMsg }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% elif successMsg %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <div>{{ successMsg }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+    </div>
+
+    <form action="/loadplan" method="post">
+        <div class="container-fluid">
+            <div class="mb-5 d-grid">
+                <div class="form-floating">
+                    <select class="form-select mb-1 bg-primary-subtle" name="loadPlanName" id="loadPlanName">
+                        <option selected disabled>(Select Plan)</option>
+                        {% if plansList %}
+                            {% for plan in plansList %}
+                                <option value="{{ plan.plan_id }}">{{ plan.plan_name }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                    <label for="loadPlanName">Plan Name</label>
+                </div>
+                <button type="submit" class="btn btn-outline-primary">Load Plan</button>
+            </div>
+        </div>
+    </form>
+
+    <form action="/plan" method="post">
+        <div class="container-fluid">
+            <div class="mb-3 row" id="mealPlanConstraints">
+                <div class="col-sm" id="targetCaloriesInput">
+                    <div class="input-group">
+                        <div class="form-floating">
+                            <input class="form-control bg-primary-subtle" autocomplete="off" autofocus id="targetCal" name="targetCal" aria-describedby="targetCalHelp" placeholder="Target" type="number" min="0" {% if info %} value="{{ info.targetCal }}" {% endif %} required>
+                            <label for="targetCal" class="form-label">Target Calories</label>
+                        </div>
+                        <span class="input-group-text">kcal</span>
+                    </div>
+                    <div id="targetCalHelp" class="form-text">Total number of calories (kcal) to be consumed daily.</div>
+                </div>
+                
+                <div class="col-sm" id="proteinMassInput">
+                    <div class="input-group">
+                        <div class="form-floating">
+                            <input class="form-control bg-primary-subtle" autocomplete="off" id="proteinMass" name="proteinMass" aria-describedby="proteinMassHelp" placeholder="Mass" type="number" min="0" {% if info %} value="{{ info.proteinMass }}" {% endif %} required>
+                            <label for="proteinMass" class="form-label">Protein Mass</label>
+                        </div>
+                        <span class="input-group-text">g</span>
+                    </div>
+                    <div id="proteinMassHelp" class="form-text">Total mass of protein to be consumed daily.</div>
+                </div>
+                
+                <div class="col-sm" id="fatPercentageInput">
+                    <div class="input-group">
+                        <div class="form-floating">
+                            <input class="form-control bg-primary-subtle" autocomplete="off" id="fatPercent" name="fatPercent" aria-describedby="fatPercentHelp" placeholder="Percentage" type="number" min="0" max="100" {% if info %} value="{{ info.fatPercent }}" {% endif %} required>
+                            <label for="fatPercent" class="form-label">Fat Percentage</label>
+                        </div>
+                        <span class="input-group-text">%</span>
+                    </div>
+                    <div id="fatPercentHelp" class="form-text">Proportion of total daily calories reserved for fat.</div>
+                </div>
+            </div>
+            
+            <div class="mb-3 d-grid" id="constraintSubmitButton">
+                <button type="submit" class="btn btn-outline-primary">Preview</button>
+            </div>
+        </div>
+    </form>
+
+    <form action="/saveplan" method="post">
+        <div class="container-fluid">
+            <div class="mb-3 row" id="macroTableGroup">
+                <div class="col-md" id="macroTableDaily">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">Daily</th>
+                                <th scope="col">Energy (kcal)</th>
+                                <th scope="col">Mass (g)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="table-group-divider">
+                            <tr>
+                                <th scope="row">Protein</th>
+                                <td><input class="form-control" autocomplete="off" id="dailyProteinEnergyDisplay" name="dailyProteinEnergyDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.proteinEnergy) }}' {% endif %} readonly></td>
+                                <td><input class="form-control" autocomplete="off" id="dailyProteinMassDisplay" name="dailyProteinMassDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.proteinMass) }}' {% endif %} readonly></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Fat</th>
+                                <td><input class="form-control" autocomplete="off" id="dailyFatEnergyDisplay" name="dailyFatEnergyDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.fatEnergy) }}' {% endif %} readonly></td>
+                                <td><input class="form-control" autocomplete="off" id="dailyFatMassDisplay" name="dailyFatMassDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.fatMass) }}' {% endif %} readonly></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Carbohydrate</th>
+                                <td><input class="form-control" autocomplete="off" id="dailyCarbEnergyDisplay" name="dailyCarbEnergyDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.carbEnergy) }}' {% endif %} readonly></td>
+                                <td><input class="form-control" autocomplete="off" id="dailyCarbMassDisplay" name="dailyCarbMassDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.carbMass) }}' {% endif %} readonly></td>
+                            </tr>
+                        </tbody>
+
+                        <tfoot class="table-group-divider">
+                            <tr>
+                                <th scope="row">Total</th>
+                                <td><input class="form-control" autocomplete="off" id="dailyTotalEnergyDisplay" name="dailyTotalEnergyDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.totalEnergy) }}' {% endif %} readonly></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="col-md" id="macroTableWeekly">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">Weekly</th>
+                                <th scope="col">Energy (kcal)</th>
+                                <th scope="col">Mass (g)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="table-group-divider">
+                            <tr>
+                                <th scope="row">Protein</th>
+                                <td><input class="form-control" autocomplete="off" id="weeklyProteinEnergyDisplay" name="weeklyProteinEnergyDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.proteinEnergy * 7) }}' {% endif %} readonly></td>
+                                <td><input class="form-control" autocomplete="off" id="weeklyProteinMassDisplay" name="weeklyProteinMassDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.proteinMass * 7) }}' {% endif %} readonly></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Fat</th>
+                                <td><input class="form-control" autocomplete="off" id="weeklyFatEnergyDisplay" name="weeklyFatEnergyDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.fatEnergy * 7) }}' {% endif %} readonly></td>
+                                <td><input class="form-control" autocomplete="off" id="weeklyFatMassDisplay" name="weeklyFatMassDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.fatMass * 7) }}' {% endif %} readonly></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Carbohydrate</th>
+                                <td><input class="form-control" autocomplete="off" id="weeklyCarbEnergyDisplay" name="weeklyCarbEnergyDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.carbEnergy * 7) }}' {% endif %} readonly></td>
+                                <td><input class="form-control" autocomplete="off" id="weeklyCarbMassDisplay" name="weeklyCarbMassDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.carbMass * 7) }}' {% endif %} readonly></td>
+                            </tr>
+                        </tbody>
+
+                        <tfoot class="table-group-divider">
+                            <tr>
+                                <th scope="row">Total</th>
+                                <td><input class="form-control" autocomplete="off" id="weeklyTotalEnergyDisplay" name="weeklyTotalEnergyDisplay" type="number" {% if info %} value='{{ "%.1f"|format(info.totalEnergy * 7) }}' {% endif %} readonly></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mb-5 d-grid">
+                <div class="mb-1 form-floating">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="planNameInput" name="planNameInput" aria-describedby="planNameHelp" placeholder="Plan Name" type="text" required>
+                    <label for="planNameInput" class="form-label">Plan Name</label>
+                </div>
+                <button type="submit" class="btn btn-outline-primary">Save Macro Profile</button>
+            </div>
+        </div>
+    </form>
+
+    {% if foodTable %}
+        <form action="/addfoodtoplan" method="post">
+            <div class="container-fluid">
+                <div class="mb-5 row">
+                    <div class="col-sm-6">
+                        <h1>Current plan: {{ info.planName }}</h1>
+                    </div>
+                    <div class="col-sm-6 d-grid">
+                        <div class="form-floating">
+                            <select class="form-select mb-1 bg-primary-subtle" name="foodNameAddToPlan" id="foodNameAddToPlan">
+                                <option selected disabled>(Select Food)</option>
+                                {% for food in foodList %}
+                                    <option value="{{ food.food_id }}">{{ food.food_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="foodNameAddToPlan">Food</label>
+                        </div>
+                        <input type="hidden" value="{{ plan.plan_id }}">
+                        <button type="submit" class="btn btn-outline-primary">Add Food</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
