@@ -1,10 +1,10 @@
-# Imports
-
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, session
 import sqlite3
 import time
 
 app = Flask(__name__)
+
+app.secret_key = 'b1bb09fe442fc7569ff747c5544fec41ca220dc3f80e82d7fd4b6425cbd8dce0'
 
 DATABASE = 'foodData.db'
 
@@ -59,7 +59,26 @@ def plan():
     # Response to GET request
     else:
         # Retrieve all plans from database
-        return render_template("plan.html", plansList=get_plans())
+        if "action" not in session:
+            return render_template("plan.html", plansList=get_plans())
+        if session["action"] == "loadplan":
+            res = get_db("SELECT * FROM plans WHERE plan_id = ?", (session["plan_id"]), one=True)
+
+            info = {"planName": res["plan_name"],
+                    "dateTimeCreated": res["date_created"],
+                    "proteinEnergy": res["protein_energy"],
+                    "proteinMass": res["protein_mass"],
+                    "fatEnergy": res["fat_energy"],
+                    "fatMass": res["fat_mass"],
+                    "carbEnergy": res["carbohydrate_energy"],
+                    "carbMass": res["carbohydrate_mass"],
+                    "totalEnergy": res["total_energy"],
+                    "targetCal": res["total_energy"],
+                    "fatPercent": 100*res["fat_energy"]/res["total_energy"]}
+            session.pop("action", None)
+            return render_template("plan.html", info=info, plansList=get_plans())
+        else:
+            return render_template("plan.html", plansList=get_plans())
 
 
 @app.route("/saveplan", methods=["GET", "POST"])
@@ -116,21 +135,10 @@ def saveplan():
 @app.route("/loadplan", methods=["GET", "POST"])
 def loadplan():
     if request.method == "POST":
-        plan_id = request.form.get("loadPlanName", None, str)
-        res = get_db("SELECT * FROM plans WHERE plan_id = ?", (plan_id))[0]
+        session["action"] = "loadplan"
+        session["plan_id"] = request.form.get("loadPlanName", None, str)
 
-        info = {"planName": res["plan_name"],
-                "dateTimeCreated": res["date_created"],
-                "proteinEnergy": res["protein_energy"],
-                "proteinMass": res["protein_mass"],
-                "fatEnergy": res["fat_energy"],
-                "fatMass": res["fat_mass"],
-                "carbEnergy": res["carbohydrate_energy"],
-                "carbMass": res["carbohydrate_mass"],
-                "totalEnergy": res["total_energy"],
-                "targetCal": res["total_energy"],
-                "fatPercent": 100*res["fat_energy"]/res["total_energy"]}
-        return render_template("plan.html", info=info, plansList=get_plans())
+        return redirect("/plan")
     else:
         return redirect("/plan")
 

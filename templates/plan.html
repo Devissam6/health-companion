@@ -26,7 +26,7 @@
             <div class="mb-5 d-grid">
                 <div class="form-floating">
                     <select class="form-select mb-1 bg-primary-subtle" name="loadPlanName" id="loadPlanName">
-                        <option selected disabled>(Select Plan)</option>
+                        <option value="default" selected disabled>(Select Plan)</option>
                         {% if plansList %}
                         {% for plan in plansList %}
                         <option value="{{ plan.plan_id }}">{{ plan.plan_name }}</option>
