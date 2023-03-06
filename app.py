@@ -22,6 +22,9 @@ def get_db(query, args=(), one=False):
 def get_plans():
     return get_db("SELECT * FROM plans")
 
+def get_foods():
+    return get_db("SELECT * FROM foods")
+
 @app.route("/reset", methods=["GET", "POST"])
 def reset():
     keylist = list(session.keys())
@@ -52,7 +55,7 @@ def plan():
                 errorMsg += ("({error}) ".format(error=key))
                 error = True
         if error:
-            return render_template("plan.html", errorMsg=errorMsg)
+            return render_template("plan.html", errorMsg=errorMsg, plansList=get_plans(), foodList=get_foods())
         # Calculate values to fill table
         info["proteinEnergy"] = info["proteinMass"] * 4
         info["fatEnergy"] = info["targetCal"] * (info["fatPercent"]/100)
@@ -61,13 +64,13 @@ def plan():
         info["carbMass"] = info["carbEnergy"] * (1/4)
         info["totalEnergy"] = info["targetCal"]
         # Render index page with values in info, retrieved plans from database
-        return render_template("plan.html", info=info, plansList=get_plans())
+        return render_template("plan.html", info=info, plansList=get_plans(), foodList=get_foods())
     # Response to GET request
     else:
         # Retrieve all plans from database
-        if "action" not in session:
+        if "plan_id" not in session:
             return render_template("plan.html", plansList=get_plans())
-        if session["action"] == "loadplan":
+        else:
             res = get_db("SELECT * FROM plans WHERE plan_id = ?", (session["plan_id"]), one=True)
 
             info = {"planName": res["plan_name"],
@@ -81,10 +84,11 @@ def plan():
                     "totalEnergy": res["total_energy"],
                     "targetCal": res["total_energy"],
                     "fatPercent": 100*res["fat_energy"]/res["total_energy"]}
-            session.pop("action", None)
-            return render_template("plan.html", info=info, plansList=get_plans())
-        else:
-            return render_template("plan.html", plansList=get_plans())
+            
+            foodInfo = get_db("""SELECT f.food_id, f.food_name, f.energy, f.fat, f.saturated_fat, f.carbohydrates, f.sugar, f.fibre, f.protein, f.salt, f.price_per_kg, f.link, f.notes, pfl.mass
+                            FROM foods AS f, plan_food_link AS pfl 
+                            WHERE f.food_id = pfl.food_id AND pfl.plan_id = ?""", (session["plan_id"],))
+            return render_template("plan.html", info=info, plansList=get_plans(), foodList=get_foods(), foodInfo=foodInfo)
 
 
 @app.route("/saveplan", methods=["GET", "POST"])
@@ -102,7 +106,7 @@ def saveplan():
                 "dailyTotalEnergy": request.form.get("dailyTotalEnergyDisplay", -1, float)}
         # User circumvented the 'required' tag of input fields in one way or another and submitted insufficient information
         if not info["planName"]:
-            return render_template("plan.html", errorMsg="Please enter a name for the plan.")
+            return render_template("plan.html", errorMsg="Please enter a name for the plan.", plansList=get_plans(), foodList=get_foods())
         if (info["dailyProteinEnergy"] < 0 or
             info["dailyProteinMass"] < 0 or
             info["dailyFatEnergy"] < 0 or
@@ -110,7 +114,7 @@ def saveplan():
             info["dailyCarbEnergy"] < 0 or
             info["dailyCarbMass"] < 0 or
             info["dailyTotalEnergy"] < 0):
-            return render_template("plan.html", errorMsg="Please verify valid macro values.")
+            return render_template("plan.html", errorMsg="Please verify valid macro values.", plansList=get_plans(), foodList=get_foods())
 
         get_db("""INSERT INTO plans (plan_name,
                                     date_created,
@@ -141,7 +145,6 @@ def saveplan():
 @app.route("/loadplan", methods=["GET", "POST"])
 def loadplan():
     if request.method == "POST":
-        session["action"] = "loadplan"
         session["plan_id"] = request.form.get("loadPlanName", None, str)
 
         return redirect("/plan")
@@ -207,3 +210,39 @@ def deletefood():
         return redirect("/food")
     else:
         return redirect("/food")
+    
+
+@app.route("/addfoodtoplan", methods=["GET", "POST"])
+def addfoodtoplan():
+    if request.method == "POST":
+        foodToAdd = request.form.get("foodToAdd", None, str)
+        get_db("""INSERT INTO plan_food_link (plan_id,
+                                                food_id,
+                                                mass)
+                    VALUES (?, ?, ?)""", (session["plan_id"], foodToAdd, 0))
+        return redirect("/plan")
+    else:
+        return redirect("/plan")
+    
+
+@app.route("/removefoodfromplan", methods=["GET", "POST"])
+def removefoodfromplan():
+    if request.method == "POST":
+        food_id = request.form.get("food_id", None, int)
+        get_db("""DELETE FROM plan_food_link WHERE plan_id = ? AND food_id = ?""", (session["plan_id"], food_id))
+        return redirect("/plan")
+    else:
+        return redirect("/plan")
+    
+
+@app.route("/updatefoodmass", methods=["GET", "POST"])
+def updatefoodmass():
+    if request.method == "POST":
+        newMass = request.form.get("planFoodMass")
+        food_id = request.form.get("food_id")
+        get_db("""UPDATE plan_food_link
+                    SET mass = ?
+                    WHERE plan_id = ? AND food_id = ?""", (newMass, session["plan_id"], food_id))
+        return redirect("/plan")
+    else:
+        return redirect("/plan")

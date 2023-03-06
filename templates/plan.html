@@ -172,4 +172,87 @@
             </div>
         </div>
     </form>
+
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <h1>{{ info.planName }}</h1>
+        </div>
+        <form action="/addfoodtoplan" method="post">
+            <div class="mb-5 d-grid">
+                <div class="form-floating">
+                    <select class="form-select mb-1 bg-primary-subtle" name="foodToAdd" id="foodToAdd">
+                        <option value="default" selected disabled>(Select Food)</option>
+                        {% if foodList %}
+                        {% for food in foodList %}
+                        <option value="{{ food.food_id }}">{{ food.food_name }}</option>
+                        {% endfor %}
+                        {% endif %}
+                    </select>
+                    <label for="foodToAdd">Food</label>
+                </div>
+                <button type="submit" class="btn btn-outline-primary">Add</button>
+            </div>
+        </form>
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Mass</th>
+                    <th scope="col">Energy</th>
+                    <th scope="col">Fat</th>
+                    <th scope="col">Sat. Fat</th>
+                    <th scope="col">Carb</th>
+                    <th scope="col">Sugar</th>
+                    <th scope="col">Fibre</th>
+                    <th scope="col">Protein</th>
+                    <th scope="col">Salt</th>
+                    <th scope="col">£</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for food in foodInfo %}
+                    <tr {% if food.notes != "" %}data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ food.notes }}"{% endif %}>
+                        {% if food.link == "" %}
+                            <th scope="row"><span>{{ food.food_name }}</span></th>
+                        {% else %}
+                            <th scope="row"><a href="{{ food.link }}" target="_blank">{{ food.food_name }}</a></th>
+                        {% endif %}
+                        <td>
+                            <div class="container-fluid">
+                                <form action="/updatefoodmass" method="post">
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <input type="number" class="form-control bg-primary-subtle" value="{{ "{:.0f}".format(food.mass) }}" name="planFoodMass" id="planFoodMass">
+                                        </div>
+                                        <div class="col-2">
+                                            <button type="submit" class="btn">
+                                                <i class="fa-solid fa-pen-to-square"><input type="hidden" name="food_id" id="food_id" value="{{ food.food_id }}"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
+                        <td>{{ "{:.0f}".format(food.energy * food.mass / 100) }}</td>
+                        <td>{{ "{:.1f}".format(food.fat * food.mass / 100) }}</td>
+                        <td>{{ "{:.1f}".format(food.saturated_fat * food.mass / 100) }}</td>
+                        <td>{{ "{:.1f}".format(food.carbohydrates * food.mass / 100) }}</td>
+                        <td>{{ "{:.1f}".format(food.sugar * food.mass / 100) }}</td>
+                        <td>{{ "{:.1f}".format(food.fibre * food.mass / 100) }}</td>
+                        <td>{{ "{:.1f}".format(food.protein * food.mass / 100) }}</td>
+                        <td>{{ "{:.2f}".format(food.salt * food.mass / 100) }}</td>
+                        <td>{{ "{:.2f}".format(food.price_per_kg * food.mass / 1000) }}</td>
+                        <td>
+                            <form action="/removefoodfromplan" method="post">
+                                <button type="submit" class="btn">
+                                    <i class="fa-solid fa-trash"><input type="hidden" name="food_id" id="food_id" value="{{ food.food_id }}"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
