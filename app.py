@@ -22,6 +22,12 @@ def get_db(query, args=(), one=False):
 def get_plans():
     return get_db("SELECT * FROM plans")
 
+@app.route("/reset", methods=["GET", "POST"])
+def reset():
+    keylist = list(session.keys())
+    for key in keylist:
+        session.pop(key)
+    return redirect("/")
 
 @app.route("/", methods=["GET"])
 def index():
