@@ -88,7 +88,20 @@ def plan():
             foodInfo = get_db("""SELECT f.food_id, f.food_name, f.energy, f.fat, f.saturated_fat, f.carbohydrates, f.sugar, f.fibre, f.protein, f.salt, f.price_per_kg, f.link, f.notes, pfl.mass
                             FROM foods AS f, plan_food_link AS pfl 
                             WHERE f.food_id = pfl.food_id AND pfl.plan_id = ?""", (session["plan_id"],))
-            return render_template("plan.html", info=info, plansList=get_plans(), foodList=get_foods(), foodInfo=foodInfo)
+            
+            foodInfoTotal = {"energy": 0, "fat": 0, "saturated_fat": 0, "carbohydrates": 0, "sugar": 0, "fibre": 0, "protein": 0, "salt": 0, "price": 0}
+            for food in foodInfo:
+                foodInfoTotal["energy"] += food["energy"] * food["mass"] / 100
+                foodInfoTotal["fat"] += food["fat"] * food["mass"] / 100
+                foodInfoTotal["saturated_fat"] += food["saturated_fat"] * food["mass"] / 100
+                foodInfoTotal["carbohydrates"] += food["carbohydrates"] * food["mass"] / 100
+                foodInfoTotal["sugar"] += food["sugar"] * food["mass"] / 100
+                foodInfoTotal["fibre"] += food["fibre"] * food["mass"] / 100
+                foodInfoTotal["protein"] += food["protein"] * food["mass"] / 100
+                foodInfoTotal["salt"] += food["salt"] * food["mass"] / 100
+                foodInfoTotal["price"] += food["price_per_kg"] * food["mass"] / 1000
+
+            return render_template("plan.html", info=info, plansList=get_plans(), foodList=get_foods(), foodInfo=foodInfo, foodInfoTotal=foodInfoTotal)
 
 
 @app.route("/saveplan", methods=["GET", "POST"])

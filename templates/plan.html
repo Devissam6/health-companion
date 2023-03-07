@@ -211,6 +211,18 @@
                 </tr>
             </thead>
             <tbody>
+                <tr class="table-active">
+                    <td colspan="2">TOTAL</td>
+                    <td>{{ "{:.0f}".format(foodInfoTotal.energy) }}</td>
+                    <td>{{ "{:.1f}".format(foodInfoTotal.fat) }}</td>
+                    <td>{{ "{:.1f}".format(foodInfoTotal.saturated_fat) }}</td>
+                    <td>{{ "{:.1f}".format(foodInfoTotal.carbohydrates) }}</td>
+                    <td>{{ "{:.1f}".format(foodInfoTotal.sugar) }}</td>
+                    <td>{{ "{:.1f}".format(foodInfoTotal.fibre) }}</td>
+                    <td>{{ "{:.1f}".format(foodInfoTotal.protein) }}</td>
+                    <td>{{ "{:.2f}".format(foodInfoTotal.salt) }}</td>
+                    <td colspan="2">{{ "{:.2f}".format(foodInfoTotal.price) }}</td>
+                </tr>
                 {% for food in foodInfo %}
                     <tr {% if food.notes != "" %}data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ food.notes }}"{% endif %}>
                         {% if food.link == "" %}
