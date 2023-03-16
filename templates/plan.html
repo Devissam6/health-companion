@@ -23,19 +23,39 @@
 
     <form action="/loadplan" method="post">
         <div class="container-fluid">
-            <div class="mb-5 d-grid">
-                <div class="form-floating">
-                    <select class="form-select mb-1 bg-primary-subtle" name="loadPlanName" id="loadPlanName">
-                        <option value="default" selected disabled>(Select Plan)</option>
-                        {% if plansList %}
-                        {% for plan in plansList %}
-                        <option value="{{ plan.plan_id }}">{{ plan.plan_name }}</option>
-                        {% endfor %}
-                        {% endif %}
-                    </select>
-                    <label for="loadPlanName">Plan Name</label>
+            <div class="mb-1 row">
+                <div class="col-12">
+                    <div class="form-floating">
+                        <select class="form-select mb-1 bg-primary-subtle" name="loadPlanName" id="loadPlanName">
+                            <option selected disabled>(Select Plan)</option>
+                            {% if plansList %}
+                            {% for plan in plansList %}
+                            <option value="{{ plan.plan_id }}">{{ plan.plan_name }}</option>
+                            {% endfor %}
+                            {% endif %}
+                        </select>
+                        <label for="loadPlanName">Plan Name</label>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-outline-primary">Load Plan</button>
+            </div>
+            <div class="mb-5 row">
+                <div class="col-3">
+                    <div class="form-check form-check-inline d-grid mx-auto px-0">
+                        <input type="radio" class="btn-check" name="planLoadDelete" id="load" value="load" checked>
+                        <label for="load" class="btn btn-outline-success">Load</label>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-check form-check-inline d-grid mx-auto px-0">
+                        <input type="radio" class="btn-check" name="planLoadDelete" id="delete" value="delete">
+                        <label for="delete" class="btn btn-outline-danger">Delete</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row mx-auto">
+                        <button type="submit" class="btn btn-outline-primary">Confirm</button>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
@@ -51,7 +71,7 @@
                         </div>
                         <span class="input-group-text">kcal</span>
                     </div>
-                    <div id="targetCalHelp" class="form-text">Total number of calories (kcal) to be consumed daily.</div>
+                    <div id="targetCalHelp" class="form-text">Total number of calories to be consumed daily.</div>
                 </div>
                 
                 <div class="col-sm" id="proteinMassInput">
@@ -91,8 +111,8 @@
                         <thead>
                             <tr>
                                 <th scope="col">Daily</th>
-                                <th scope="col">Energy (kcal)</th>
-                                <th scope="col">Mass (g)</th>
+                                <th scope="col">Energy/kcal</th>
+                                <th scope="col">Mass/g</th>
                             </tr>
                         </thead>
 
@@ -129,8 +149,8 @@
                         <thead>
                             <tr>
                                 <th scope="col">Weekly</th>
-                                <th scope="col">Energy (kcal)</th>
-                                <th scope="col">Mass (g)</th>
+                                <th scope="col">Energy/kcal</th>
+                                <th scope="col">Mass/g</th>
                             </tr>
                         </thead>
 
@@ -172,99 +192,111 @@
             </div>
         </div>
     </form>
-
-    <div class="container-fluid">
-        <div class="row mb-3">
-            <h1>{{ info.planName }}</h1>
-        </div>
-        <form action="/addfoodtoplan" method="post">
-            <div class="mb-5 d-grid">
-                <div class="form-floating">
-                    <select class="form-select mb-1 bg-primary-subtle" name="foodToAdd" id="foodToAdd">
-                        <option value="default" selected disabled>(Select Food)</option>
-                        {% if foodList %}
-                        {% for food in foodList %}
-                        <option value="{{ food.food_id }}">{{ food.food_name }}</option>
-                        {% endfor %}
-                        {% endif %}
-                    </select>
-                    <label for="foodToAdd">Food</label>
+    {% if info %}
+        {% if info.planName %}
+            <div class="container-fluid">
+                <div class="row mb-3">
+                    <h1>{{ info.planName }}</h1>
                 </div>
-                <button type="submit" class="btn btn-outline-primary">Add</button>
-            </div>
-        </form>
-        <table class="table table-hover align-middle">
-            <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Mass</th>
-                    <th scope="col">Energy</th>
-                    <th scope="col">Fat</th>
-                    <th scope="col">Sat. Fat</th>
-                    <th scope="col">Carb</th>
-                    <th scope="col">Sugar</th>
-                    <th scope="col">Fibre</th>
-                    <th scope="col">Protein</th>
-                    <th scope="col">Salt</th>
-                    <th scope="col">£</th>
-                    <th scope="col">Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="table-active">
-                    <td colspan="2">TOTAL</td>
-                    <td>{{ "{:.0f}".format(foodInfoTotal.energy) }}</td>
-                    <td>{{ "{:.1f}".format(foodInfoTotal.fat) }}</td>
-                    <td>{{ "{:.1f}".format(foodInfoTotal.saturated_fat) }}</td>
-                    <td>{{ "{:.1f}".format(foodInfoTotal.carbohydrates) }}</td>
-                    <td>{{ "{:.1f}".format(foodInfoTotal.sugar) }}</td>
-                    <td>{{ "{:.1f}".format(foodInfoTotal.fibre) }}</td>
-                    <td>{{ "{:.1f}".format(foodInfoTotal.protein) }}</td>
-                    <td>{{ "{:.2f}".format(foodInfoTotal.salt) }}</td>
-                    <td colspan="2">{{ "{:.2f}".format(foodInfoTotal.price) }}</td>
-                </tr>
-                {% for food in foodInfo %}
-                    <tr {% if food.notes != "" %}data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ food.notes }}"{% endif %}>
-                        {% if food.link == "" %}
-                            <th scope="row"><span>{{ food.food_name }}</span></th>
-                        {% else %}
-                            <th scope="row"><a href="{{ food.link }}" target="_blank">{{ food.food_name }}</a></th>
-                        {% endif %}
-                        <td>
-                            <div class="container-fluid">
-                                <form action="/updatefoodmass" method="post">
+                <form action="/addfoodtoplan" method="post">
+                    <div class="mb-5 d-grid">
+                        <div class="form-floating">
+                            <select class="form-select mb-1 bg-primary-subtle" name="foodToAdd" id="foodToAdd">
+                                <option selected disabled>(Select Food)</option>
+                                {% if foodList %}
+                                {% for food in foodList %}
+                                <option value="{{ food.food_id }}">{{ food.food_name }}</option>
+                                {% endfor %}
+                                {% endif %}
+                            </select>
+                            <label for="foodToAdd">Food</label>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">Add</button>
+                    </div>
+                </form>
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Mass/g</th>
+                            <th scope="col">Energy/kcal</th>
+                            <th scope="col">Fat/g</th>
+                            <th scope="col">Sat. Fat/g</th>
+                            <th scope="col">Carb/g</th>
+                            <th scope="col">Sugar/g</th>
+                            <th scope="col">Fibre/g</th>
+                            <th scope="col">Protein/g</th>
+                            <th scope="col">Salt/g</th>
+                            <th scope="col">£</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-active">
+                            <td >TOTAL</td>
+                            <td>
+                                <div class="container-fluid">
                                     <div class="row">
                                         <div class="col-10">
-                                            <input type="number" class="form-control bg-primary-subtle" value="{{ "{:.0f}".format(food.mass) }}" name="planFoodMass" id="planFoodMass">
-                                        </div>
-                                        <div class="col-2">
-                                            <button type="submit" class="btn">
-                                                <i class="fa-solid fa-pen-to-square"><input type="hidden" name="food_id" id="food_id" value="{{ food.food_id }}"></i>
-                                            </button>
+                                            <input type="number" class="form-control" value="{{ "{:.0f}".format(foodInfoTotal.mass) }}" name="planFoodMass" id="planFoodMass" disabled>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                        </td>
-                        <td>{{ "{:.0f}".format(food.energy * food.mass / 100) }}</td>
-                        <td>{{ "{:.1f}".format(food.fat * food.mass / 100) }}</td>
-                        <td>{{ "{:.1f}".format(food.saturated_fat * food.mass / 100) }}</td>
-                        <td>{{ "{:.1f}".format(food.carbohydrates * food.mass / 100) }}</td>
-                        <td>{{ "{:.1f}".format(food.sugar * food.mass / 100) }}</td>
-                        <td>{{ "{:.1f}".format(food.fibre * food.mass / 100) }}</td>
-                        <td>{{ "{:.1f}".format(food.protein * food.mass / 100) }}</td>
-                        <td>{{ "{:.2f}".format(food.salt * food.mass / 100) }}</td>
-                        <td>{{ "{:.2f}".format(food.price_per_kg * food.mass / 1000) }}</td>
-                        <td>
-                            <form action="/removefoodfromplan" method="post">
-                                <button type="submit" class="btn">
-                                    <i class="fa-solid fa-trash"><input type="hidden" name="food_id" id="food_id" value="{{ food.food_id }}"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                                </div>
+                            </td>
+                            <td>{{ "{:.0f}".format(foodInfoTotal.energy) }}</td>
+                            <td>{{ "{:.1f}".format(foodInfoTotal.fat) }}</td>
+                            <td>{{ "{:.1f}".format(foodInfoTotal.saturated_fat) }}</td>
+                            <td>{{ "{:.1f}".format(foodInfoTotal.carbohydrates) }}</td>
+                            <td>{{ "{:.1f}".format(foodInfoTotal.sugar) }}</td>
+                            <td>{{ "{:.1f}".format(foodInfoTotal.fibre) }}</td>
+                            <td>{{ "{:.1f}".format(foodInfoTotal.protein) }}</td>
+                            <td>{{ "{:.2f}".format(foodInfoTotal.salt) }}</td>
+                            <td colspan="2">{{ "{:.2f}".format(foodInfoTotal.price) }}</td>
+                        </tr>
+                        {% for food in foodInfo %}
+                            <tr {% if food.notes != "" %}data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ food.notes }}"{% endif %}>
+                                {% if food.link == "" %}
+                                    <th scope="row"><span>{{ food.food_name }}</span></th>
+                                {% else %}
+                                    <th scope="row"><a href="{{ food.link }}" target="_blank">{{ food.food_name }}</a></th>
+                                {% endif %}
+                                <td>
+                                    <div class="container-fluid">
+                                        <form action="/updatefoodmass" method="post">
+                                            <div class="row">
+                                                <div class="col-10">
+                                                    <input type="number" class="form-control bg-primary-subtle" value="{{ "{:.0f}".format(food.mass) }}" name="planFoodMass" id="planFoodMass">
+                                                </div>
+                                                <div class="col-2">
+                                                    <button type="submit" class="btn">
+                                                        <i class="fa-solid fa-pen-to-square"><input type="hidden" name="food_id" id="food_id" value="{{ food.food_id }}"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td>{{ "{:.0f}".format(food.energy * food.mass / 100) }}</td>
+                                <td>{{ "{:.1f}".format(food.fat * food.mass / 100) }}</td>
+                                <td>{{ "{:.1f}".format(food.saturated_fat * food.mass / 100) }}</td>
+                                <td>{{ "{:.1f}".format(food.carbohydrates * food.mass / 100) }}</td>
+                                <td>{{ "{:.1f}".format(food.sugar * food.mass / 100) }}</td>
+                                <td>{{ "{:.1f}".format(food.fibre * food.mass / 100) }}</td>
+                                <td>{{ "{:.1f}".format(food.protein * food.mass / 100) }}</td>
+                                <td>{{ "{:.2f}".format(food.salt * food.mass / 100) }}</td>
+                                <td>{{ "{:.2f}".format(food.price_per_kg * food.mass / 1000) }}</td>
+                                <td>
+                                    <form action="/removefoodfromplan" method="post">
+                                        <button type="submit" class="btn">
+                                            <i class="fa-solid fa-trash"><input type="hidden" name="food_id" id="food_id" value="{{ food.food_id }}"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    {% endif %}
 {% endblock %}
