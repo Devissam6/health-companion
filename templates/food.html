@@ -7,6 +7,20 @@
 {% block activeFoodAria %}aria-current="page"{% endblock %}
 
 {% block main %}
+<div id="messageAlert" class="container-fluid my-3">
+    {% if errorMsg %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <div>{{ errorMsg }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% elif successMsg %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <div>{{ successMsg }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+</div>
+
 <form action="/savefood" method="post">
     <div class="container-fluid">
         <div class="row row-cols-xl-auto row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-2 mb-2 g-2">
