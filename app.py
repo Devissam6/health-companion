@@ -1,10 +1,13 @@
 from flask import Flask, redirect, render_template, request, session
 import sqlite3
 import time
+import configparser
 
 app = Flask(__name__)
 
-app.secret_key = 'b1bb09fe442fc7569ff747c5544fec41ca220dc3f80e82d7fd4b6425cbd8dce0'
+config = configparser.ConfigParser()
+config.read('secrets.cfg')
+app.secret_key = config['DEFAULT']['SECRET_KEY']
 
 DATABASE = 'foodData.db'
 
@@ -26,7 +29,6 @@ def get_plans():
 
 def get_foods():
     return get_db("SELECT * FROM foods")
-
 
 @app.route("/", methods=["GET"])
 def index():
@@ -196,7 +198,7 @@ def loadplan():
         return redirect("/plan")
 
 
-@app.route("/food", methods=["GET", "POST"])
+@app.route("/food", methods=["GET"])
 def food():
     foods = get_db("""SELECT * FROM foods""")
     if "errorMsg" in session:
@@ -213,54 +215,58 @@ def food():
 
 @app.route("/savefood", methods=["GET", "POST"])
 def savefood():
-    timeAdded = time.strftime("%Y-%m-%d %H:%M:%S")
-    protein = request.form.get("foodProteinInput", -1, float)
-    mass = request.form.get("foodMassInput", -1, float)
-    price = request.form.get("foodPriceInput", -1, float)
-    get_db("""INSERT INTO foods (food_name,
-                                date_added,
-                                type,
-                                energy,
-                                fat,
-                                saturated_fat,
-                                carbohydrates,
-                                sugar,
-                                fibre,
-                                protein,
-                                salt,
-                                mass,
-                                price,
-                                price_per_kg,
-                                price_per_20g_protein,
-                                link,
-                                notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (request.form.get("foodNameInput", None, str),
-                                                                                timeAdded,
-                                                                                request.form.get("foodTypeInput", None, str),
-                                                                                request.form.get("foodEnergyInput", -1, float),
-                                                                                request.form.get("foodFatInput", -1, float),
-                                                                                request.form.get("foodSatFatInput", -1, float),
-                                                                                request.form.get("foodCarbInput", -1, float),
-                                                                                request.form.get("foodSugarInput", -1, float),
-                                                                                request.form.get("foodFibreInput", -1, float),
-                                                                                protein,
-                                                                                request.form.get("foodSaltInput", -1, float),
-                                                                                mass,
-                                                                                price,
-                                                                                price * 1000 * 1/mass,
-                                                                                price * 2000 * 1/(protein * mass),
-                                                                                request.form.get("foodLinkInput", None, str),
-                                                                                request.form.get("foodNotesInput", None, str)
-                                                                                ))
-    session["successMsg"] = "Successfully added food."
-    return redirect("/food")
+    if request.method == "POST":
+        timeAdded = time.strftime("%Y-%m-%d %H:%M:%S")
+        protein = request.form.get("foodProteinInput", -1, float)
+        mass = request.form.get("foodMassInput", -1, float)
+        price = request.form.get("foodPriceInput", -1, float)
+        get_db("""INSERT INTO foods (food_name,
+                                    date_added,
+                                    type,
+                                    energy,
+                                    fat,
+                                    saturated_fat,
+                                    carbohydrates,
+                                    sugar,
+                                    fibre,
+                                    protein,
+                                    salt,
+                                    mass,
+                                    price,
+                                    price_per_kg,
+                                    price_per_20g_protein,
+                                    link,
+                                    notes)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (request.form.get("foodNameInput", None, str),
+                                                                                    timeAdded,
+                                                                                    request.form.get("foodTypeInput", None, str),
+                                                                                    request.form.get("foodEnergyInput", -1, float),
+                                                                                    request.form.get("foodFatInput", -1, float),
+                                                                                    request.form.get("foodSatFatInput", -1, float),
+                                                                                    request.form.get("foodCarbInput", -1, float),
+                                                                                    request.form.get("foodSugarInput", -1, float),
+                                                                                    request.form.get("foodFibreInput", -1, float),
+                                                                                    protein,
+                                                                                    request.form.get("foodSaltInput", -1, float),
+                                                                                    mass,
+                                                                                    price,
+                                                                                    price * 1000 * 1/mass,
+                                                                                    price * 2000 * 1/(protein * mass),
+                                                                                    request.form.get("foodLinkInput", None, str),
+                                                                                    request.form.get("foodNotesInput", None, str)
+                                                                                    ))
+        session["successMsg"] = "Successfully added food."
+        return redirect("/food")
+    else:
+        return redirect("/food")
 
 
 @app.route("/deletefood", methods=["GET", "POST"])
 def deletefood():
     if request.method == "POST":
         food_id = request.form.get("food_id", None, int)
-        get_db("""DELETE FROM foods WHERE food_id = ?""", (food_id,))
+        get_db("DELETE FROM foods WHERE food_id = ?", (food_id,))
+        get_db("DELETE FROM plan_food_link WHERE food_id = ?", (food_id,))
         session["successMsg"] = "Food deleted."
         return redirect("/food")
     else:

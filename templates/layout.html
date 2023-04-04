@@ -36,6 +36,19 @@
         </nav>
 
         <main>
+            <div id="messageAlert" class="container-fluid my-3">
+                {% if errorMsg %}
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        <div>{{ errorMsg }}</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% elif successMsg %}
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <div>{{ successMsg }}</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+            </div>
             {% block main %}{% endblock %}
         </main>
 

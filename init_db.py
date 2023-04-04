@@ -1,8 +1,16 @@
-import sqlite3
+import sqlite3, sys
 
-con = sqlite3.connect('foodData.db')
 
-with open('schema.sql') as schema:
-    con.executescript(schema.read())
+if len(sys.argv) != 2:
+    print("INCORRECT NUMBER OF ARGUMENTS.")
+    print("USAGE: init_db.py [DATABASE FILE]")
 
-con.close()
+elif sys.argv[1][-3:] != ".db":
+    print("SPECIFY .db FILE.")
+    print("USAGE: init_db.py [DATABASE FILE]")
+
+else:
+    con = sqlite3.connect(sys.argv[1])
+    with open("schema.sql") as schema:
+        con.executescript(schema.read())
+    con.close()

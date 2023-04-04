@@ -7,137 +7,123 @@
 {% block activeFoodAria %}aria-current="page"{% endblock %}
 
 {% block main %}
-<div id="messageAlert" class="container-fluid my-3">
-    {% if errorMsg %}
-        <div class="alert alert-danger alert-dismissible" role="alert">
-            <div>{{ errorMsg }}</div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <form action="/savefood" method="post">
+        <div class="container-fluid">
+            <div class="row row-cols-xl-auto row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-2 mb-2 g-2">
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodNameInput" name="foodNameInput" aria-describedby="foodNameHelp" placeholder="Food Name" type="text" required>
+                    <label for="foodNameInput" class="form-label">Food Name</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodTypeInput" name="foodTypeInput" aria-describedby="foodTypeHelp" placeholder="Food Type" type="text" required>
+                    <label for="foodTypeInput" class="form-label">Food Type</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodEnergyInput" name="foodEnergyInput" aria-describedby="foodEnergyHelp" placeholder="Energy (kcal)" type="number" step="1" min="0" required>
+                    <label for="foodEnergyInput" class="form-label">Energy (kcal)</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodFatInput" name="foodFatInput" aria-describedby="foodFatHelp" placeholder="Fat (g)" type="number" step="0.1" min="0" required>
+                    <label for="foodFatInput" class="form-label">Fat (g)</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodSatFatInput" name="foodSatFatInput" aria-describedby="foodSatFatHelp" placeholder="Sat. Fat (g)" type="number" step="0.1" min="0" required>
+                    <label for="foodSatFatInput" class="form-label">Sat. Fat (g)</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodCarbInput" name="foodCarbInput" aria-describedby="foodCarbHelp" placeholder="Carb (g)" type="number" step="0.1" min="0" required>
+                    <label for="foodCarbInput" class="form-label">Carb (g)</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodSugarInput" name="foodSugarInput" aria-describedby="foodSugarHelp" placeholder="Sugar (g)" type="number" step="0.1" min="0" required>
+                    <label for="foodSugarInput" class="form-label">Sugar (g)</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodFibreInput" name="foodFibreInput" aria-describedby="foodFibreHelp" placeholder="Fibre (g)" type="number" step="0.1" min="0" required>
+                    <label for="foodFibreInput" class="form-label">Fibre (g)</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodProteinInput" name="foodProteinInput" aria-describedby="foodProteinHelp" placeholder="Protein (g)" type="number" step="0.1" min="0" required>
+                    <label for="foodProteinInput" class="form-label">Protein (g)</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodSaltInput" name="foodSaltInput" aria-describedby="foodSaltHelp" placeholder="Salt (g)" type="number" step="0.01" min="0" required>
+                    <label for="foodSaltInput" class="form-label">Salt (g)</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodMassInput" name="foodMassInput" aria-describedby="foodMassHelp" placeholder="Mass (g)" type="number" step="0.1" min="0" required>
+                    <label for="foodMassInput" class="form-label">Mass (g)</label>
+                </div>
+                <div class="form-floating col-xl-1">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodPriceInput" name="foodPriceInput" aria-describedby="foodPriceHelp" placeholder="Price (GBP)" type="number" step="0.01" min="0" required>
+                    <label for="foodPriceInput" class="form-label">Price (GBP)</label>
+                </div>
+            </div>
+            <div class="row row-cols-sm-2 mb-2 g-2">
+                <div class="form-floating">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodLinkInput" name="foodLinkInput" aria-describedby="foodLinkHelp" placeholder="Link" type="text">
+                    <label for="foodLinkInput" class="form-label">Link (optional)</label>
+                </div>
+                <div class="form-floating">
+                    <input class="form-control bg-primary-subtle" autocomplete="off" id="foodNotesInput" name="foodNotesInput" aria-describedby="foodNotesHelp" placeholder="Notes" type="text">
+                    <label for="foodNotesInput" class="form-label">Notes (optional)</label>
+                </div>
+            </div>
+            <div class="row mb-2 mx-auto">
+                <button type="submit" class="btn btn-outline-primary">Save Food</button>
+            </div>
         </div>
-    {% elif successMsg %}
-        <div class="alert alert-success alert-dismissible" role="alert">
-            <div>{{ successMsg }}</div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endif %}
-</div>
-
-<form action="/savefood" method="post">
+    </form>
     <div class="container-fluid">
-        <div class="row row-cols-xl-auto row-cols-lg-6 row-cols-md-4 row-cols-sm-3 row-cols-2 mb-2 g-2">
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodNameInput" name="foodNameInput" aria-describedby="foodNameHelp" placeholder="Food Name" type="text" required>
-                <label for="foodNameInput" class="form-label">Food Name</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodTypeInput" name="foodTypeInput" aria-describedby="foodTypeHelp" placeholder="Food Type" type="text" required>
-                <label for="foodTypeInput" class="form-label">Food Type</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodEnergyInput" name="foodEnergyInput" aria-describedby="foodEnergyHelp" placeholder="Energy (kcal)" type="number" step="1" min="0" required>
-                <label for="foodEnergyInput" class="form-label">Energy (kcal)</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodFatInput" name="foodFatInput" aria-describedby="foodFatHelp" placeholder="Fat (g)" type="number" step="0.1" min="0" required>
-                <label for="foodFatInput" class="form-label">Fat (g)</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodSatFatInput" name="foodSatFatInput" aria-describedby="foodSatFatHelp" placeholder="Sat. Fat (g)" type="number" step="0.1" min="0" required>
-                <label for="foodSatFatInput" class="form-label">Sat. Fat (g)</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodCarbInput" name="foodCarbInput" aria-describedby="foodCarbHelp" placeholder="Carb (g)" type="number" step="0.1" min="0" required>
-                <label for="foodCarbInput" class="form-label">Carb (g)</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodSugarInput" name="foodSugarInput" aria-describedby="foodSugarHelp" placeholder="Sugar (g)" type="number" step="0.1" min="0" required>
-                <label for="foodSugarInput" class="form-label">Sugar (g)</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodFibreInput" name="foodFibreInput" aria-describedby="foodFibreHelp" placeholder="Fibre (g)" type="number" step="0.1" min="0" required>
-                <label for="foodFibreInput" class="form-label">Fibre (g)</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodProteinInput" name="foodProteinInput" aria-describedby="foodProteinHelp" placeholder="Protein (g)" type="number" step="0.1" min="0" required>
-                <label for="foodProteinInput" class="form-label">Protein (g)</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodSaltInput" name="foodSaltInput" aria-describedby="foodSaltHelp" placeholder="Salt (g)" type="number" step="0.01" min="0" required>
-                <label for="foodSaltInput" class="form-label">Salt (g)</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodMassInput" name="foodMassInput" aria-describedby="foodMassHelp" placeholder="Mass (g)" type="number" step="0.1" min="0" required>
-                <label for="foodMassInput" class="form-label">Mass (g)</label>
-            </div>
-            <div class="form-floating col-xl-1">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodPriceInput" name="foodPriceInput" aria-describedby="foodPriceHelp" placeholder="Price (GBP)" type="number" step="0.01" min="0" required>
-                <label for="foodPriceInput" class="form-label">Price (GBP)</label>
-            </div>
-        </div>
-        <div class="row row-cols-sm-2 mb-2 g-2">
-            <div class="form-floating">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodLinkInput" name="foodLinkInput" aria-describedby="foodLinkHelp" placeholder="Link" type="text">
-                <label for="foodLinkInput" class="form-label">Link (optional)</label>
-            </div>
-            <div class="form-floating">
-                <input class="form-control bg-primary-subtle" autocomplete="off" id="foodNotesInput" name="foodNotesInput" aria-describedby="foodNotesHelp" placeholder="Notes" type="text">
-                <label for="foodNotesInput" class="form-label">Notes (optional)</label>
-            </div>
-        </div>
-        <div class="row mb-2 mx-auto">
-            <button type="submit" class="btn btn-outline-primary">Save Food</button>
-        </div>
-    </div>
-</form>
-<div class="container-fluid">
-    <table class="table table-hover align-middle">
-        <thead>
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Energy</th>
-                <th scope="col">Fat</th>
-                <th scope="col">Sat. Fat</th>
-                <th scope="col">Carb</th>
-                <th scope="col">Sugar</th>
-                <th scope="col">Fibre</th>
-                <th scope="col">Protein</th>
-                <th scope="col">Salt</th>
-                <th scope="col">£/(20g P)</th>
-                <th scope="col">£/(kg)</th>
-                <th scope="col">Mass</th>
-                <th scope="col">£</th>
-                <th scope="col">Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for food in foods %}
-                <tr {% if food.notes != "" %}data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ food.notes }}"{% endif %}>
-                    {% if food.link == "" %}
-                        <th scope="row"><span>{{ food.food_name }}</span></th>
-                    {% else %}
-                        <th scope="row"><a href="{{ food.link }}" target="_blank">{{ food.food_name }}</a></th>
-                    {% endif %}
-                    <td>{{ "{:.0f}".format(food.energy) }}</td>
-                    <td>{{ "{:.1f}".format(food.fat) }}</td>
-                    <td>{{ "{:.1f}".format(food.saturated_fat) }}</td>
-                    <td>{{ "{:.1f}".format(food.carbohydrates) }}</td>
-                    <td>{{ "{:.1f}".format(food.sugar) }}</td>
-                    <td>{{ "{:.1f}".format(food.fibre) }}</td>
-                    <td>{{ "{:.1f}".format(food.protein) }}</td>
-                    <td>{{ "{:.2f}".format(food.salt) }}</td>
-                    <td>{{ "{:.2f}".format(food.price_per_20g_protein) }}</td>
-                    <td>{{ "{:.2f}".format(food.price_per_kg) }}</td>
-                    <td>{{ "{:.0f}".format(food.mass) }}</td>
-                    <td>{{ "{:.2f}".format(food.price) }}</td>
-                    <td>
-                        <form action="/deletefood" method="post">
-                            <button type="submit" class="btn">
-                                <i class="fa-solid fa-trash"><input type="hidden" name="food_id" id="food_id" value="{{ food.food_id }}"></i>
-                            </button>
-                        </form>
-                    </td>
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Energy</th>
+                    <th scope="col">Fat</th>
+                    <th scope="col">Sat. Fat</th>
+                    <th scope="col">Carb</th>
+                    <th scope="col">Sugar</th>
+                    <th scope="col">Fibre</th>
+                    <th scope="col">Protein</th>
+                    <th scope="col">Salt</th>
+                    <th scope="col">£/(20g P)</th>
+                    <th scope="col">£/(kg)</th>
+                    <th scope="col">Mass</th>
+                    <th scope="col">£</th>
+                    <th scope="col">Delete</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                {% for food in foods %}
+                    <tr {% if food.notes != "" %}data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="{{ food.notes }}"{% endif %}>
+                        {% if food.link == "" %}
+                            <th scope="row"><span>{{ food.food_name }}</span></th>
+                        {% else %}
+                            <th scope="row"><a href="{{ food.link }}" target="_blank">{{ food.food_name }}</a></th>
+                        {% endif %}
+                        <td>{{ "{:.0f}".format(food.energy) }}</td>
+                        <td>{{ "{:.1f}".format(food.fat) }}</td>
+                        <td>{{ "{:.1f}".format(food.saturated_fat) }}</td>
+                        <td>{{ "{:.1f}".format(food.carbohydrates) }}</td>
+                        <td>{{ "{:.1f}".format(food.sugar) }}</td>
+                        <td>{{ "{:.1f}".format(food.fibre) }}</td>
+                        <td>{{ "{:.1f}".format(food.protein) }}</td>
+                        <td>{{ "{:.2f}".format(food.salt) }}</td>
+                        <td>{{ "{:.2f}".format(food.price_per_20g_protein) }}</td>
+                        <td>{{ "{:.2f}".format(food.price_per_kg) }}</td>
+                        <td>{{ "{:.0f}".format(food.mass) }}</td>
+                        <td>{{ "{:.2f}".format(food.price) }}</td>
+                        <td>
+                            <form action="/deletefood" method="post">
+                                <button type="submit" class="btn">
+                                    <i class="fa-solid fa-trash"><input type="hidden" name="food_id" id="food_id" value="{{ food.food_id }}"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
