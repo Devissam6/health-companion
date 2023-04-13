@@ -7,9 +7,8 @@ app = Flask(__name__)
 
 config = configparser.ConfigParser()
 config.read('secrets.cfg')
-app.secret_key = config['DEFAULT']['SECRET_KEY']
-
-DATABASE = 'foodData.db'
+app.secret_key = config["DEFAULT"]["SECRET_KEY"]
+DATABASE = config["DEFAULT"]["DATABASE"]
 
 # Simple function to query the database (adapted from Flask documentation)
 def get_db(query, args=(), one=False):

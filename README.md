@@ -1,15 +1,7 @@
 # health-companion
-#### Video Demo: [url]
+#### Video Demo: [https://youtu.be/DLbRi3ce2Yc]
 #### Description:
 an app collating and trivialising tools of various functions relating to health and fitness
-
-## User guide:
-When constructing a meal plan, enter on the main page the target calorie count, the percentage of daily calorie limit to be reserved for fats, and desired daily protein intake. Submit the form and the full macronutrient profile will be calculated.
-
-Macronutrient energy density
-Protein: 4kcal/g
-Fat: 9kcal/g
-Carbohydrate: 4kcal/g 
 
 ## Files:
 
